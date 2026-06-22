@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         'X-Title': 'Prodiga Chatbot'
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3.3-70b-instruct:free',
+        model: 'openrouter/auto',
         messages: [
           { role: 'system', content: 'You are a helpful assistant for Prodiga AI Infinity, an AI marketing agency in West Bengal, India.' },
           ...messages
