@@ -7,28 +7,30 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { messages, system } = req.body;
-
-    const systemPrompt = system || 'You are a helpful assistant for Prodiga AI Infinity, an AI marketing and automation agency in West Bengal, India.';
+    const { messages } = req.body;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'https://prodigainfinity.com',
+        'X-Title': 'Prodiga Chatbot'
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-exp:free',
+        model: 'mistralai/mistral-7b-instruct:free',
         messages: [
-          { role: 'system', content: systemPrompt },
+          { role: 'system', content: 'You are a helpful assistant for Prodiga AI Infinity, an AI marketing agency in West Bengal, India.' },
           ...messages
         ]
       })
     });
 
     const data = await response.json();
+    console.log('OpenRouter response:', JSON.stringify(data));
+    
     const text = data?.choices?.[0]?.message?.content;
-    if (!text) return res.status(200).json({ reply: 'Sorry, I could not respond right now.' });
+    if (!text) return res.status(200).json({ reply: `Debug: ${JSON.stringify(data)}` });
     res.status(200).json({ reply: text });
   } catch (err) {
     res.status(500).json({ error: err.message });
