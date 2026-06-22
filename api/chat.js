@@ -7,7 +7,9 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { messages } = req.body;
+    const { messages, system } = req.body;
+
+    const systemPrompt = system || 'You are a helpful assistant for Prodiga AI Infinity, an AI marketing and automation agency in West Bengal, India.';
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -18,7 +20,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'meta-llama/llama-3.1-8b-instruct:free',
         messages: [
-          { role: 'system', content: 'You are a helpful assistant for Prodiga AI Infinity, an AI marketing and automation agency in West Bengal, India. Help visitors understand services: AI Marketing, Voice Agents, WhatsApp Automation, App Development, and online courses. Be friendly and concise. Reply in Bengali if user writes Bengali, otherwise English.' },
+          { role: 'system', content: systemPrompt },
           ...messages
         ]
       })
